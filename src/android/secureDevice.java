@@ -92,7 +92,7 @@ public class secureDevice extends CordovaPlugin {
     }
 
     public static boolean isDeviceRooted() {
-        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3() || checkRunningProcesses() || isTestKeyBuild() || isDebuggable(this.cordova.getActivity());
+        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3() || checkRunningProcesses() || isTestKeyBuild();
     }
 
     private static boolean checkRootMethod1() {
@@ -123,7 +123,7 @@ public class secureDevice extends CordovaPlugin {
         }
     }
 
-    private boolean checkRunningProcesses() {
+    private static boolean checkRunningProcesses() {
       boolean returnValue = false;
 
       // Get currently running application processes
@@ -142,7 +142,7 @@ public class secureDevice extends CordovaPlugin {
       return returnValue;
     }
    
-    private boolean isTestKeyBuild()
+    private static boolean isTestKeyBuild()
     {
         String str = Build.TAGS;
         if ((str != null) && (str.contains("test-keys")));
@@ -169,11 +169,11 @@ public class secureDevice extends CordovaPlugin {
      * @param context
      * @return true if pattern set, false if not (or if an issue when checking)
      */
-    private boolean isDebuggable(Context context){
+    private static boolean isDebuggable(Context context){
         return ((context.getApplicationContext().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
     }
    
-    private boolean detectDebugger() {
+    private static boolean detectDebugger() {
         return Debug.isDebuggerConnected();
     }
    
