@@ -46,6 +46,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.os.Debug;
 
 
 public class secureDevice extends CordovaPlugin {
@@ -69,8 +70,9 @@ public class secureDevice extends CordovaPlugin {
     private void checkDevice() {
         boolean _isDeviceRooted = isDeviceRooted();
         boolean _isPasscodeSet = doesDeviceHaveSecuritySetup(this.cordova.getActivity());
+        boolean _isDebug = isDebugActive(this.cordova.getActivity());
 
-        if (_isDeviceRooted || !_isPasscodeSet) {
+        if (_isDeviceRooted || !_isPasscodeSet || _isDebug) {
             // Remove View
             View v = this.view.getView();
             if (v != null) {
@@ -90,7 +92,7 @@ public class secureDevice extends CordovaPlugin {
     }
 
     public static boolean isDeviceRooted() {
-        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3() || checkRunningProcesses() || isTestKeyBuild();
+        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3() || checkRunningProcesses() || isTestKeyBuild() || isDebuggable(this.cordova.getActivity());
     }
 
     private static boolean checkRootMethod1() {
@@ -121,7 +123,7 @@ public class secureDevice extends CordovaPlugin {
         }
     }
 
-    public boolean checkRunningProcesses() {
+    private boolean checkRunningProcesses() {
       boolean returnValue = false;
 
       // Get currently running application processes
@@ -147,8 +149,9 @@ public class secureDevice extends CordovaPlugin {
         for (int i = 1; ; i = 0)
             return i;
     }
-
-    /**
+   
+   
+   /**
      * <p>Checks to see if the lock screen is set up with either a PIN / PASS / PATTERN</p>
      *
      * <p>For Api 16+</p>
@@ -160,6 +163,32 @@ public class secureDevice extends CordovaPlugin {
     public static boolean doesDeviceHaveSecuritySetup(Context context)
     {
         return isPatternSet(context) || isPassOrPinSet(context);
+    }
+   
+    /**
+     * @param context
+     * @return true if pattern set, false if not (or if an issue when checking)
+     */
+    private boolean isDebuggable(Context context){
+        return ((context.getApplicationContext().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
+    }
+   
+    private boolean detectDebugger() {
+        return Debug.isDebuggerConnected();
+    }
+   
+   /**
+     * <p>Checks to see if the lock screen is set up with either a PIN / PASS / PATTERN</p>
+     *
+     * <p>For Api 16+</p>
+     *
+     * @return true if PIN, PASS or PATTERN set, false otherwise.
+     * @author doridori
+     * @source https://gist.github.com/doridori/54c32c66ef4f4e34300f
+     */
+    public static boolean isDebugActive(Context context)
+    {
+        return isDebuggable(context) || detectDebugger();
     }
 
     /**
