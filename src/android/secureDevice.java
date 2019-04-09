@@ -90,7 +90,7 @@ public class secureDevice extends CordovaPlugin {
     }
 
     public static boolean isDeviceRooted() {
-        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3();
+        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3() || checkRunningProcesses();
     }
 
     private static boolean checkRootMethod1() {
@@ -121,7 +121,24 @@ public class secureDevice extends CordovaPlugin {
         }
     }
 
+    public boolean checkRunningProcesses() {
+      boolean returnValue = false;
 
+      // Get currently running application processes
+      List<RunningServiceInfo> list = manager.getRunningServices(300);
+
+      if(list != null){
+        String tempName;
+        for(int i=0;i<list.size();++i){
+          tempName = list.get(i).process;
+
+          if(tempName.contains("supersu") || tempName.contains("superuser")){
+            returnValue = true;
+          }
+        }
+      }
+      return returnValue;
+    }
 
     /**
      * <p>Checks to see if the lock screen is set up with either a PIN / PASS / PATTERN</p>
