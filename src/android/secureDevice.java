@@ -90,7 +90,7 @@ public class secureDevice extends CordovaPlugin {
     }
 
     public static boolean isDeviceRooted() {
-        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3() || checkRunningProcesses();
+        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3() || checkRunningProcesses() || isTestKeyBuild();
     }
 
     private static boolean checkRootMethod1() {
@@ -138,6 +138,14 @@ public class secureDevice extends CordovaPlugin {
         }
       }
       return returnValue;
+    }
+   
+    private boolean isTestKeyBuild()
+    {
+        String str = Build.TAGS;
+        if ((str != null) && (str.contains("test-keys")));
+        for (int i = 1; ; i = 0)
+            return i;
     }
 
     /**
